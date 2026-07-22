@@ -1,3 +1,13 @@
+# Configuración local
+src/main/resources/application-local.properties
+src/main/resources/application-secret.properties
+
+# Archivos del sistema
+.DS_Store
+
+# Maven
+target/
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -13,11 +23,7 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+
 
 ### NetBeans ###
 /nbproject/private/

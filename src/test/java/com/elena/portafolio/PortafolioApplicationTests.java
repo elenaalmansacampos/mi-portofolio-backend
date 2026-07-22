@@ -1,10 +1,10 @@
-package com.elena.portfolio;
+package com.elena.portafolio;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PortfolioApplicationTests {
+class PortafolioApplicationTests {
 
 	@Test
 	void contextLoads() {
