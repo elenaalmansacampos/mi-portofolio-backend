@@ -1,5 +1,6 @@
-package com.elena.portafolio.security.config;
+package com.elena.portafolio.security;
 
+import com.elena.portafolio.security.filter.JWTAuthentication;
 import com.elena.portafolio.security.service.CustomUserDetailsService;
 
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
@@ -23,32 +25,40 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final JWTAuthentication jwtAuthentication;
 
 
     public SecurityConfig(
             CustomUserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            JWTAuthentication jwtAuthentication
     ) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtAuthentication = jwtAuthentication;
     }
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http
+    ) throws Exception {
+
 
         http
                 .csrf(csrf -> csrf.disable())
+                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
 
-                        // rutas públicas
                         .requestMatchers(
-                                "/api/auth/**",
-                                "/api/projects",
-                                "/api/projects/**"
+                                "/api/auth/**"
                         ).permitAll()
 
                         .anyRequest().authenticated()
+                )
+                .addFilterBefore(
+                        jwtAuthentication,
+                        UsernamePasswordAuthenticationFilter.class
                 );
 
 
@@ -59,11 +69,13 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider();
 
-        provider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(userDetailsService);
+
+
         provider.setPasswordEncoder(passwordEncoder);
+
 
         return provider;
     }
@@ -74,6 +86,8 @@ public class SecurityConfig {
             AuthenticationConfiguration configuration
     ) throws Exception {
 
+
         return configuration.getAuthenticationManager();
     }
+
 }
