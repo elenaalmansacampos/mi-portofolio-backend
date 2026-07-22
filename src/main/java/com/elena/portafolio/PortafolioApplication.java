@@ -1,13 +1,13 @@
-package com.elena.portfolio;
+package com.elena.portafolio;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PortfolioApplication {
+public class PortafolioApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PortfolioApplication.class, args);
+		SpringApplication.run(PortafolioApplication.class, args);
 	}
 
 }
