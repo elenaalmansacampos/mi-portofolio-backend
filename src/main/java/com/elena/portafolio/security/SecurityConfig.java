@@ -18,76 +18,68 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 public class SecurityConfig {
 
+        private final CustomUserDetailsService userDetailsService;
+        private final PasswordEncoder passwordEncoder;
+        private final JWTAuthentication jwtAuthentication;
 
-    private final CustomUserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
-    private final JWTAuthentication jwtAuthentication;
+        public SecurityConfig(
+                        CustomUserDetailsService userDetailsService,
+                        PasswordEncoder passwordEncoder,
+                        JWTAuthentication jwtAuthentication) {
 
+                this.userDetailsService = userDetailsService;
+                this.passwordEncoder = passwordEncoder;
+                this.jwtAuthentication = jwtAuthentication;
+        }
 
-    public SecurityConfig(
-            CustomUserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder,
-            JWTAuthentication jwtAuthentication
-    ) {
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtAuthentication = jwtAuthentication;
-    }
+        @Bean
+        public SecurityFilterChain securityFilterChain(
+                        HttpSecurity http) throws Exception {
 
+                http
+                                .csrf(csrf -> csrf.disable())
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
-    ) throws Exception {
+                                .authenticationProvider(authenticationProvider())
 
+                                .authorizeHttpRequests(auth -> auth
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .authenticationProvider(authenticationProvider())
-                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                               "/api/auth/**",
+                                                                "/api/contact")
+                                                .permitAll()
 
-                        .requestMatchers(
-                                "/api/auth/**"
-                        ).permitAll()
+                                                .requestMatchers(
+                                                                "/api/projects",
+                                                                "/api/projects/**")
+                                                .hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(
-                        jwtAuthentication,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+                                                .anyRequest().authenticated())
 
+                                .addFilterBefore(
+                                                jwtAuthentication,
+                                                UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 
+        @Bean
+        public AuthenticationProvider authenticationProvider() {
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
+                DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
 
+                provider.setPasswordEncoder(passwordEncoder);
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(userDetailsService);
+                return provider;
+        }
 
+        @Bean
+        public AuthenticationManager authenticationManager(
+                        AuthenticationConfiguration configuration) throws Exception {
 
-        provider.setPasswordEncoder(passwordEncoder);
-
-
-        return provider;
-    }
-
-
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration
-    ) throws Exception {
-
-
-        return configuration.getAuthenticationManager();
-    }
+                return configuration.getAuthenticationManager();
+        }
 
 }
