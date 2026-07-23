@@ -13,11 +13,11 @@
 	</parent>
 
 	<groupId>com.elena</groupId>
-	<artifactId>portfolio</artifactId>
+	<artifactId>portafolio</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>portfolio</name>
-	<description>Portfolio personal Full Stack</description>
+	<name>portafolio</name>
+	<description>Portafolio personal Full Stack</description>
 
 	<properties>
 		<java.version>21</java.version>
@@ -46,7 +46,11 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
-
+        <!-- Spring Mail -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
+</dependency>
 		<!-- Spring Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -54,12 +58,14 @@
 		</dependency>
 
 
+		
 		<!-- PostgreSQL -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>42.7.7</version>
+    <scope>runtime</scope>
+</dependency>
 
 
 		<!-- JWT -->
