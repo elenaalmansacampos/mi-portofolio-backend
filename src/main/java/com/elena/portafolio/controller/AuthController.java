@@ -2,14 +2,16 @@ package com.elena.portafolio.controller;
 
 import com.elena.portafolio.dto.LoginRequest;
 import com.elena.portafolio.dto.LoginResponse;
-import com.elena.portafolio.security.service.AuthService;
+import com.elena.portafolio.service.AuthService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
 
     private final AuthService authService;
 
@@ -20,8 +22,15 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody LoginRequest request
+    ) {
 
-        return authService.login(request);
+        LoginResponse response = authService.login(
+                request.getUsername(),
+                request.getPassword()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
