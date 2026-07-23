@@ -2,15 +2,24 @@ package com.elena.portafolio.dto;
 
 public class LoginResponse {
 
+    private String token;
     private String username;
     private String role;
-    private String token;
 
 
-    public LoginResponse(String username, String role, String token) {
+    public LoginResponse(
+            String token,
+            String username,
+            String role
+    ) {
+        this.token = token;
         this.username = username;
         this.role = role;
-        this.token = token;
+    }
+
+
+    public String getToken() {
+        return token;
     }
 
 
@@ -21,10 +30,5 @@ public class LoginResponse {
 
     public String getRole() {
         return role;
-    }
-
-
-    public String getToken() {
-        return token;
     }
 }

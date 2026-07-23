@@ -1,32 +1,35 @@
 package com.elena.portafolio.controller;
 
+import com.elena.portafolio.entity.ContactMessage;
+import com.elena.portafolio.service.ContactService;
 
-import com.elena.portafolio.dto.ContactRequest;
-import com.elena.portafolio.service.EmailService;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contact")
 public class ContactController {
 
+    private final ContactService contactService;
 
-    private final EmailService emailService;
-
-
-    public ContactController(EmailService emailService) {
-        this.emailService = emailService;
+    public ContactController(ContactService contactService) {
+        this.contactService = contactService;
     }
 
-
     @PostMapping
-    public String sendContact(
-            @RequestBody ContactRequest request
+    public ResponseEntity<?> sendMessage(
+            @RequestBody ContactMessage contactMessage
     ) {
 
-        emailService.sendEmail(request);
+        contactService.sendMessage(contactMessage);
 
-        return "Les responderemos en breve";
+        return ResponseEntity.ok(
+                Map.of(
+                        "message",
+                        "Gracias por contactar conmigo. He recibido tu mensaje y te responderé en breve."
+                )
+        );
     }
 }

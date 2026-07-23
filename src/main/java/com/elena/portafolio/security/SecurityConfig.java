@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
@@ -21,65 +22,84 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-        private final CustomUserDetailsService userDetailsService;
-        private final PasswordEncoder passwordEncoder;
-        private final JWTAuthentication jwtAuthentication;
+    private final CustomUserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTAuthentication jwtAuthentication;
 
-        public SecurityConfig(
-                        CustomUserDetailsService userDetailsService,
-                        PasswordEncoder passwordEncoder,
-                        JWTAuthentication jwtAuthentication) {
+    public SecurityConfig(
+            CustomUserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder,
+            JWTAuthentication jwtAuthentication) {
 
-                this.userDetailsService = userDetailsService;
-                this.passwordEncoder = passwordEncoder;
-                this.jwtAuthentication = jwtAuthentication;
-        }
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtAuthentication = jwtAuthentication;
+    }
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(
-                        HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http) throws Exception {
 
-                http
-                                .csrf(csrf -> csrf.disable())
+        http
+                // Desactivar CSRF porque usamos JWT
+                .csrf(csrf -> csrf.disable())
 
-                                .authenticationProvider(authenticationProvider())
+                // Permitir CORS
+                .cors(Customizer.withDefaults())
 
-                                .authorizeHttpRequests(auth -> auth
+                // Proveedor de autenticación
+                .authenticationProvider(authenticationProvider())
 
-                                                .requestMatchers(
-                                                               "/api/auth/**",
-                                                                "/api/contact")
-                                                .permitAll()
+                .authorizeHttpRequests(auth -> auth
 
-                                                .requestMatchers(
-                                                                "/api/projects",
-                                                                "/api/projects/**")
-                                                .hasRole("ADMIN")
+                        // Login público
+                        .requestMatchers("/api/auth/login")
+                        .permitAll()
 
-                                                .anyRequest().authenticated())
+                        // Contacto público
+                        .requestMatchers(
+                                "/api/contact",
+                                "/api/contact/**")
+                        .permitAll()
 
-                                .addFilterBefore(
-                                                jwtAuthentication,
-                                                UsernamePasswordAuthenticationFilter.class);
+                        // Error público
+                        .requestMatchers("/error")
+                        .permitAll()
 
-                return http.build();
-        }
+                        // SOLO PARA LA PRUEBA
+                        .requestMatchers(
+                                "/api/projects",
+                                "/api/projects/**")
+                        .permitAll()
 
-        @Bean
-        public AuthenticationProvider authenticationProvider() {
+                        // El resto necesita autenticación
+                        .anyRequest()
+                        .authenticated()
+                )
 
-                DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+                // Filtro JWT
+                .addFilterBefore(
+                        jwtAuthentication,
+                        UsernamePasswordAuthenticationFilter.class);
 
-                provider.setPasswordEncoder(passwordEncoder);
+        return http.build();
+    }
 
-                return provider;
-        }
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
 
-        @Bean
-        public AuthenticationManager authenticationManager(
-                        AuthenticationConfiguration configuration) throws Exception {
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(userDetailsService);
 
-                return configuration.getAuthenticationManager();
-        }
+        provider.setPasswordEncoder(passwordEncoder);
 
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration) throws Exception {
+
+        return configuration.getAuthenticationManager();
+    }
 }
