@@ -173,3 +173,8 @@ Al enviar un mensaje:
 ## Licencia
 
 Proyecto personal. Sin licencia específica.
+
+## Autora
+https://github.com/elenaalmansacampos
+https://www.linkedin.com/in/elena-almansa-5315a017/
+

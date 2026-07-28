@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,43 +42,37 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
-                // Desactivar CSRF porque usamos JWT
                 .csrf(csrf -> csrf.disable())
-
-                // Permitir CORS
                 .cors(Customizer.withDefaults())
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
 
-                // Proveedor de autenticación
                 .authenticationProvider(authenticationProvider())
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Login público
-                        .requestMatchers("/api/auth/login")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/auth/login")
                         .permitAll()
 
-                        // Contacto público
                         .requestMatchers(
                                 "/api/contact",
                                 "/api/contact/**")
                         .permitAll()
 
-                        // Error público
                         .requestMatchers("/error")
                         .permitAll()
 
-                        // SOLO PARA LA PRUEBA
                         .requestMatchers(
                                 "/api/projects",
                                 "/api/projects/**")
                         .permitAll()
 
-                        // El resto necesita autenticación
                         .anyRequest()
                         .authenticated()
                 )
 
-                // Filtro JWT
                 .addFilterBefore(
                         jwtAuthentication,
                         UsernamePasswordAuthenticationFilter.class);

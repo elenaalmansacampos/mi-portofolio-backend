@@ -26,8 +26,8 @@ public class JWTAuthentication extends OncePerRequestFilter {
 
     public JWTAuthentication(
             JwtService jwtService,
-            CustomUserDetailsService userDetailsService
-    ) {
+            CustomUserDetailsService userDetailsService) {
+
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
@@ -37,26 +37,29 @@ public class JWTAuthentication extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
+        // Rutas públicas que no necesitan pasar por el filtro JWT
         return path.startsWith("/api/auth")
-                || path.startsWith("/api/contact");
+                || path.startsWith("/api/contact")
+                || path.startsWith("/api/projects")
+                || path.equals("/error");
     }
 
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+            FilterChain filterChain)
+            throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
 
+        // Si no hay token, continuar sin autenticar
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
-
         String username;
 
         try {
@@ -65,8 +68,6 @@ public class JWTAuthentication extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
-        System.out.println("TOKEN VALIDADO PARA: " + username);
 
         if (username != null
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -80,20 +81,14 @@ public class JWTAuthentication extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities()
-                        );
+                                userDetails.getAuthorities());
 
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource()
-                                .buildDetails(request)
-                );
+                                .buildDetails(request));
 
                 SecurityContextHolder.getContext()
                         .setAuthentication(authToken);
-
-                // Mensajes de depuración
-                System.out.println("USUARIO AUTENTICADO: " + userDetails.getUsername());
-                System.out.println("ROLES: " + userDetails.getAuthorities());
             }
         }
 
