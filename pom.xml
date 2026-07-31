@@ -106,6 +106,14 @@
 		</dependency>
 
 
+		<!-- H2 (BD en memoria para tests) -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
 	</dependencies>
 
 

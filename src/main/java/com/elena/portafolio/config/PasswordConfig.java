@@ -1,4 +1,4 @@
-package com.elena.portafolio.security.config;
+package com.elena.portafolio.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

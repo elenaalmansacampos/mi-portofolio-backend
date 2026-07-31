@@ -1,25 +1,50 @@
 package com.elena.portafolio.service;
 
 import com.elena.portafolio.entity.Project;
+import com.elena.portafolio.repository.ProjectRepository;
+
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
-public interface ProjectService {
+@Service
+public class ProjectService {
 
+    private final ProjectRepository projectRepository;
 
-    List<Project> findAll();
+    public ProjectService(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
+    public List<Project> findAll() {
+        return projectRepository.findAll();
+    }
 
-    Project findById(Long id);
+    public Project findById(Long id) {
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+    }
 
+    public Project save(Project project) {
+        return projectRepository.save(project);
+    }
 
-    Project save(Project project);
+    public Project update(Long id, Project project) {
+        Project existing = findById(id);
 
+        existing.setTitle(project.getTitle());
+        existing.setDescription(project.getDescription());
+        existing.setTechnologies(project.getTechnologies());
+        existing.setImageUrl(project.getImageUrl());
+        existing.setGithubUrl(project.getGithubUrl());
+        existing.setDemoUrl(project.getDemoUrl());
 
-    Project update(Long id, Project project);
+        return projectRepository.save(existing);
+    }
 
-
-    void delete(Long id);
+    public void delete(Long id) {
+        projectRepository.deleteById(id);
+    }
 
 }

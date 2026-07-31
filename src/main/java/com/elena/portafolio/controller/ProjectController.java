@@ -26,7 +26,7 @@ public class ProjectController {
 
 
 
-    // Obtener todos los proyectos (público)
+    
     @GetMapping
     public ResponseEntity<List<Project>> findAll() {
 
@@ -37,7 +37,7 @@ public class ProjectController {
 
 
 
-    // Obtener un proyecto por id (público)
+    
     @GetMapping("/{id}")
     public ResponseEntity<Project> findById(
             @PathVariable Long id

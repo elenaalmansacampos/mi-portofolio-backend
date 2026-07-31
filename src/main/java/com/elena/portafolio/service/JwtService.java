@@ -1,4 +1,4 @@
-package com.elena.portafolio.security.service;
+package com.elena.portafolio.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +12,6 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-
 
     private final String SECRET_KEY =
             "REDACTED";

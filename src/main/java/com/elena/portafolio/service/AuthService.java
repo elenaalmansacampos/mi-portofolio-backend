@@ -3,7 +3,7 @@ package com.elena.portafolio.service;
 import com.elena.portafolio.dto.LoginResponse;
 import com.elena.portafolio.entity.User;
 import com.elena.portafolio.repository.UserRepository;
-import com.elena.portafolio.security.service.JwtService;
+import com.elena.portafolio.service.JwtService;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

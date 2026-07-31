@@ -1,7 +1,7 @@
 package com.elena.portafolio.security.filter;
 
-import com.elena.portafolio.security.service.CustomUserDetailsService;
-import com.elena.portafolio.security.service.JwtService;
+import com.elena.portafolio.service.CustomUserDetailsService;
+import com.elena.portafolio.service.JwtService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

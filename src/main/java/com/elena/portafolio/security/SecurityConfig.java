@@ -1,7 +1,7 @@
 package com.elena.portafolio.security;
 
 import com.elena.portafolio.security.filter.JWTAuthentication;
-import com.elena.portafolio.security.service.CustomUserDetailsService;
+import com.elena.portafolio.service.CustomUserDetailsService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

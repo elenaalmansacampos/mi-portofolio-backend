@@ -1,4 +1,4 @@
-package com.elena.portafolio.security.service;
+package com.elena.portafolio.service;
 
 import com.elena.portafolio.entity.User;
 import com.elena.portafolio.repository.UserRepository;
