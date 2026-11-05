@@ -1,7 +1,10 @@
 package com.elena.portafolio.controller;
 
+import com.elena.portafolio.dto.ContactRequest;
 import com.elena.portafolio.entity.ContactMessage;
 import com.elena.portafolio.service.ContactService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +23,14 @@ public class ContactController {
 
     @PostMapping
     public ResponseEntity<?> sendMessage(
-            @RequestBody ContactMessage contactMessage
+            @Valid @RequestBody ContactRequest request
     ) {
+
+        ContactMessage contactMessage = new ContactMessage(
+                request.name(),
+                request.email(),
+                request.message()
+        );
 
         contactService.sendMessage(contactMessage);
 

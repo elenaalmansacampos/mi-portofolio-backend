@@ -3,25 +3,39 @@ package com.elena.portafolio.service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 
 @Service
 public class JwtService {
 
-    private final String SECRET_KEY =
-            "REDACTED";
+    private final SecretKey signingKey;
+    private final long expirationMinutes;
 
 
-    private SecretKey getSigningKey() {
+    public JwtService(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.expiration-minutes:15}") long expirationMinutes
+    ) {
 
-        return Keys.hmacShaKeyFor(
-                SECRET_KEY.getBytes()
+        if (secret == null
+                || secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+
+            throw new IllegalArgumentException(
+                    "jwt.secret debe tener al menos 32 bytes"
+            );
+        }
+
+        this.signingKey = Keys.hmacShaKeyFor(
+                secret.getBytes(StandardCharsets.UTF_8)
         );
+        this.expirationMinutes = expirationMinutes;
     }
 
 
@@ -31,9 +45,12 @@ public class JwtService {
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(
-                        new Date(System.currentTimeMillis() + 1000 * 60 * 60)
+                        new Date(
+                                System.currentTimeMillis()
+                                + expirationMinutes * 60_000
+                        )
                 )
-                .signWith(getSigningKey())
+                .signWith(signingKey)
                 .compact();
     }
 
@@ -41,7 +58,7 @@ public class JwtService {
     public String extractUsername(String token) {
 
         return Jwts.parser()
-                .verifyWith(getSigningKey())
+                .verifyWith(signingKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()

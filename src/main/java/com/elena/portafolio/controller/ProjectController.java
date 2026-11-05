@@ -1,9 +1,17 @@
 package com.elena.portafolio.controller;
 
 
-import com.elena.portafolio.entity.Project;
+import com.elena.portafolio.dto.PagedResponse;
+import com.elena.portafolio.dto.ProjectRequest;
+import com.elena.portafolio.dto.ProjectResponse;
 import com.elena.portafolio.service.ProjectService;
 
+import jakarta.validation.Valid;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,21 +33,39 @@ public class ProjectController {
     }
 
 
-
-    
     @GetMapping
-    public ResponseEntity<List<Project>> findAll() {
+    public ResponseEntity<PagedResponse<ProjectResponse>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), 100);
+
+        Pageable pageable = PageRequest.of(
+                safePage,
+                safeSize,
+                Sort.by("displayOrder").ascending()
+                        .and(Sort.by("createdAt").descending())
+        );
 
         return ResponseEntity.ok(
-                projectService.findAll()
+                projectService.findAll(pageable)
         );
     }
 
 
+    @GetMapping("/featured")
+    public ResponseEntity<List<ProjectResponse>> findFeatured() {
 
-    
+        return ResponseEntity.ok(
+                projectService.findFeatured()
+        );
+    }
+
+
     @GetMapping("/{id}")
-    public ResponseEntity<Project> findById(
+    public ResponseEntity<ProjectResponse> findById(
             @PathVariable Long id
     ) {
 
@@ -49,35 +75,28 @@ public class ProjectController {
     }
 
 
-
-    // Crear proyecto (ADMIN)
     @PostMapping
-    public ResponseEntity<Project> create(
-            @RequestBody Project project
+    public ResponseEntity<ProjectResponse> create(
+            @Valid @RequestBody ProjectRequest request
     ) {
 
-        return ResponseEntity.ok(
-                projectService.save(project)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(projectService.create(request));
     }
 
 
-
-    // Actualizar proyecto (ADMIN)
     @PutMapping("/{id}")
-    public ResponseEntity<Project> update(
+    public ResponseEntity<ProjectResponse> update(
             @PathVariable Long id,
-            @RequestBody Project project
+            @Valid @RequestBody ProjectRequest request
     ) {
 
         return ResponseEntity.ok(
-                projectService.update(id, project)
+                projectService.update(id, request)
         );
     }
 
 
-
-    // Eliminar proyecto (ADMIN)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id

@@ -18,6 +18,10 @@ public class Project {
     private String title;
 
 
+    @Column(unique = true, length = 160)
+    private String slug;
+
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -32,6 +36,14 @@ public class Project {
 
 
     private String demoUrl;
+
+
+    @Column(nullable = false)
+    private boolean featured = false;
+
+
+    @Column(nullable = false)
+    private int displayOrder = 0;
 
 
     private LocalDateTime createdAt;
@@ -77,6 +89,11 @@ public class Project {
     }
 
 
+    public String getSlug() {
+        return slug;
+    }
+
+
     public String getDescription() {
         return description;
     }
@@ -102,6 +119,16 @@ public class Project {
     }
 
 
+    public boolean isFeatured() {
+        return featured;
+    }
+
+
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
+
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -110,6 +137,11 @@ public class Project {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
 
@@ -135,5 +167,15 @@ public class Project {
 
     public void setDemoUrl(String demoUrl) {
         this.demoUrl = demoUrl;
+    }
+
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
+    }
+
+
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }

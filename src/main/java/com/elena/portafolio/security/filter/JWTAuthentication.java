@@ -40,7 +40,6 @@ public class JWTAuthentication extends OncePerRequestFilter {
         // Rutas públicas que no necesitan pasar por el filtro JWT
         return path.startsWith("/api/auth")
                 || path.startsWith("/api/contact")
-                || path.startsWith("/api/projects")
                 || path.equals("/error");
     }
 
