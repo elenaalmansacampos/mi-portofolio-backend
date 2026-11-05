@@ -247,6 +247,10 @@ APP_ADMIN_PASSWORD='una-password-larga-y-segura' \
 
 La contraseña debe tener al menos 12 caracteres. El proceso crea el usuario y termina.
 
+## Despliegue
+
+El repositorio incluye `render.yaml` para desplegar en Render con Docker. La aplicación escucha en `PORT` (con fallback a `8080`) y el health check es `/actuator/health`. Configura las variables indicadas en `../OPERACIONES.md`.
+
 ## Licencia
 
 Proyecto personal. Sin licencia específica.
