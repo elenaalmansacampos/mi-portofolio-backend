@@ -34,7 +34,7 @@ class PostgresMigrationTest {
                 Integer.class
         );
 
-        assertTrue(applied != null && applied >= 3);
+        assertTrue(applied != null && applied >= 4);
 
         Integer slugColumn = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM information_schema.columns "
@@ -51,5 +51,23 @@ class PostgresMigrationTest {
         );
 
         assertEquals(1, refreshTable);
+
+        Integer newProjects = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM projects WHERE slug IN ("
+                + "'fundacion-verisure',"
+                + "'servido-hackathon-stellar',"
+                + "'athletica-gestion-gimnasio')",
+                Integer.class
+        );
+
+        assertEquals(3, newProjects);
+
+        Integer duplicate = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM projects "
+                + "WHERE slug = 'biblioteca-feminista-13'",
+                Integer.class
+        );
+
+        assertEquals(0, duplicate);
     }
 }
