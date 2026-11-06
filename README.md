@@ -2,6 +2,8 @@
 
 API REST para portafolio personal. Gestiona proyectos, mensajes de contacto y autenticación con JWT.
 
+> **Estado actual:** backend funcional y testeado, pero **no conectado** a la versión estática publicada en GitHub Pages. El frontend usa datos locales y Web3Forms para el contacto.
+
 ## Tecnologías
 
 - **Java 21**, **Spring Boot 3.5.6**
